@@ -1,13 +1,13 @@
 # tuhorario
 Crea tu horario de asignaturas personalizado.
 
-![image](https://github.com/user-attachments/assets/a2b42820-c19c-4cb6-bc9d-bddbb9319b16)
+![Captura de pantalla 2025-02-11 191141](https://github.com/user-attachments/assets/6a6c50f2-8cac-4644-94ba-3a0095365762)
 
 Presiona click en las celdas e ingresa las asignaturas correspondiente a tu horario, así como salón/aula de clases.
 
 # Exportar a
 
-![image](https://github.com/user-attachments/assets/c80e01c0-b7be-498c-a409-5300143399d1)
+![Captura de pantalla 2025-02-11 191251](https://github.com/user-attachments/assets/17aaf837-596e-4853-8cc8-51f51e1c2b7b)
 
 En la opcion exportar tendrás 2 formas:
 
@@ -17,6 +17,6 @@ la segunda opción es exportar a un archivo PDF.
 
 # Subir archivo de texto.
 
-![image](https://github.com/user-attachments/assets/21afedda-09e4-42b4-bdfa-f1e4b32a9050)
+![Captura de pantalla 2025-02-11 191504](https://github.com/user-attachments/assets/fa1990bc-7364-464b-8d78-763a5b0e626b)
 
 Por ultimo si ya has exportado tu horario en un archivo de texto, pero lo quieres editar está la opción de subir archivo, lo que hará es mostrarte las asignaturas que previamente habias escrito para agilizarte el proceso de modificar tu horario sin necesidad de crearlo desde 0.
