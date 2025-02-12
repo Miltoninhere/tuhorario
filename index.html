@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de Clases</title>
+    <style>
+        /* Estilos para la tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4A90E2;
+            color: white;
+        }
+        .editable {
+            cursor: pointer;
+            background-color: #f2f2f2;
+        }
+        .horario-col {
+            width: 10%;
+        }
+
+        /* Estilos para los botones */
+        .print-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .print-button:hover {
+            background-color: #357ABD;
+        }
+
+        /* Estilos para los inputs dentro de las celdas */
+        .asignatura-input, .salon-input {
+            width: 90%;
+            margin: 2px 0;
+        }
+
+        /* Estilos para la sección de subida de archivos */
+        .upload-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: center;
+        }
+        .upload-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .upload-header .icono {
+            font-size: 24px;
+        }
+        .upload-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+        .upload-section p {
+            margin: 0 0 15px 0;
+            color: #555;
+        }
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+        .upload-button {
+            padding: 10px 20px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .upload-button:hover {
+            background-color: #357ABD;
+        }
+        .upload-button .icono {
+            font-size: 18px;
+        }
+
+        /* Estilos para el contenedor de exportar */
+        .exportar-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .opciones-exportar {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            margin-left: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        .opciones-exportar.mostrar {
+            display: flex;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .opcion {
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .opcion:hover {
+            background-color: #ddd;
+        }
+        .opcion .icono {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <table id="horario">
+        <thead>
+            <tr>
+                <th class="horario-col">Horario</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+                <th>Sábado</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div class="exportar-container">
+        <button class="print-button" onclick="mostrarOpciones()">Exportar a</button>
+        <div class="opciones-exportar">
+            <button class="opcion" onclick="exportarATextoPlano()">
+                <span class="icono">📄</span> Texto
+            </button>
+            <button class="opcion" onclick="exportarAPDF()">
+                <span class="icono">📑</span> PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="upload-section">
+        <div class="upload-header">
+            <span class="icono">📂</span>
+            <h3>¿Ya tienes un horario creado?</h3>
+        </div>
+        <p>Si ya has creado tu horario en esta página web y deseas editarlo, puedes subir aquí tu archivo de texto.</p>
+        <div class="upload-container">
+            <input type="file" id="jsonInput" accept=".json" style="display: none;">
+            <button class="upload-button" onclick="document.getElementById('jsonInput').click()">
+                <span class="icono">⬆️</span> Subir Archivo de Texto
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // Generar la tabla dinámicamente
+        let tbody = document.querySelector("#horario tbody");
+        let horarios = [
+            "06:00-07:00", "07:00-08:00", "08:00-09:00", "09:00-10:00",
+            "10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00",
+            "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00",
+            "18:00-19:00", "19:00-20:00"
+        ];
+
+        horarios.forEach(hora => {
+            let row = document.createElement("tr");
+            let firstCell = document.createElement("th");
+            firstCell.className = "horario-col";
+            firstCell.textContent = hora;
+            row.appendChild(firstCell);
+
+            for (let i = 0; i < 6; i++) {
+                let cell = document.createElement("td");
+                cell.className = "editable";
+                row.appendChild(cell);
+            }
+
+            tbody.appendChild(row);
+        });
+
+        // Mostrar/ocultar opciones de exportar
+        function mostrarOpciones() {
+            const opciones = document.querySelector(".opciones-exportar");
+            opciones.classList.toggle("mostrar");
+        }
+
+        // Función para exportar el horario a un archivo JSON
+        function exportarATextoPlano() {
+            const horarioData = {};
+            const rows = document.querySelectorAll("#horario tbody tr");
+
+            rows.forEach(row => {
+                const time = row.querySelector("th").textContent;
+                const cells = row.querySelectorAll("td");
+                horarioData[time] = [];
+
+                cells.forEach(cell => {
+                    horarioData[time].push({
+                        asignatura: cell.dataset.asignatura || "",
+                        salon: cell.dataset.salon || ""
+                    });
+                });
+            });
+
+            const json = JSON.stringify(horarioData, null, 2);
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "horario.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Función para exportar el horario a un archivo PDF
+        function exportarAPDF() {
+            const pdf = new jspdf.jsPDF('landscape');
+            const table = document.getElementById('horario');
+            const options = { background: 'white', scale: 3 };
+
+            html2canvas(table, options).then(canvas => {
+                const imgData = canvas.toDataURL('image/png', 1.0); // Máxima calidad
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('horario.pdf');
+            });
+        }
+
+        // Función para cargar un archivo JSON y reflejarlo en la tabla
+        document.getElementById("jsonInput").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const horarioData = JSON.parse(e.target.result);
+                const rows = document.querySelectorAll("#horario tbody tr");
+
+                rows.forEach(row => {
+                    const time = row.querySelector("th").textContent;
+                    const cells = row.querySelectorAll("td");
+
+                    if (horarioData[time]) {
+                        cells.forEach((cell, index) => {
+                            const data = horarioData[time][index];
+                            if (data) {
+                                cell.dataset.asignatura = data.asignatura;
+                                cell.dataset.salon = data.salon;
+                                cell.innerHTML = `${data.asignatura}${data.salon ? `<br>${data.salon}` : ""}`;
+                            }
+                        });
+                    }
+                });
+            };
+            reader.readAsText(file);
+        });
+
+        // Lógica de edición de celdas
+        document.getElementById("horario").addEventListener("click", function (event) {
+            let cell = event.target;
+            if (!cell.classList.contains("editable")) return;
+
+            let asignatura = cell.dataset.asignatura || "";
+            let salon = cell.dataset.salon || "";
+
+            cell.innerHTML = `
+                <input class="asignatura-input" type="text" placeholder="Asignatura" value="${asignatura}">
+                <input class="salon-input" type="text" placeholder="Salón" value="${salon}">
+            `;
+
+            let asignaturaInput = cell.querySelector(".asignatura-input");
+            let salonInput = cell.querySelector(".salon-input");
+
+            asignaturaInput.focus();
+
+            const guardarValores = () => {
+                let nuevaAsignatura = asignaturaInput.value.trim();
+                let nuevoSalon = salonInput.value.trim();
+
+                if (nuevaAsignatura || nuevoSalon) {
+                    cell.dataset.asignatura = nuevaAsignatura;
+                    cell.dataset.salon = nuevoSalon;
+                    cell.innerHTML = `${nuevaAsignatura} ${nuevoSalon ? `<br>${nuevoSalon}` : ""}`;
+                } else {
+                    cell.innerHTML = "";
+                }
+            };
+
+            asignaturaInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault(); // Evita que el input se cierre prematuramente
+                    salonInput.focus();
+                }
+            });
+
+            salonInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault(); // Evita el cierre inesperado
+                    guardarValores();
+                    cell.blur();
+                }
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!cell.contains(e.target)) {
+                    guardarValores();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
