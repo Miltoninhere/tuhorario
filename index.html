@@ -239,14 +239,25 @@
             rows.forEach(row => {
                 const time = row.querySelector("th").textContent;
                 const cells = row.querySelectorAll("td");
-                horarioData[time] = [];
+                const horarioDia = [];
 
                 cells.forEach(cell => {
-                    horarioData[time].push({
-                        asignatura: cell.dataset.asignatura || "",
-                        salon: cell.dataset.salon || ""
-                    });
+                    const asignatura = cell.dataset.asignatura || "";
+                    const salon = cell.dataset.salon || "";
+
+                    // Solo agregar al JSON si hay datos en la celda
+                    if (asignatura || salon) {
+                        horarioDia.push({
+                            asignatura: asignatura,
+                            salon: salon
+                        });
+                    }
                 });
+
+                // Solo agregar el día al JSON si hay al menos una celda con datos
+                if (horarioDia.length > 0) {
+                    horarioData[time] = horarioDia;
+                }
             });
 
             const json = JSON.stringify(horarioData, null, 2);
